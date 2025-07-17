@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project_prm392_kidmanagement.DAO.StudentToClassDao;
 import com.example.project_prm392_kidmanagement.Entity.Class;
 import com.example.project_prm392_kidmanagement.R;
 import java.util.List;
@@ -16,6 +17,7 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
 
     private List<Class> classList;
     private OnClassListener onClassListener;
+    private StudentToClassDao studentToClassDao;
 
     public ClassAdminAdapter(List<Class> classList, OnClassListener onClassListener) {
         this.classList = classList;
@@ -30,6 +32,10 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
     @NonNull
     @Override
     public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Khởi tạo studentToClassDao một lần duy nhất ở đây
+        if (studentToClassDao == null) {
+            studentToClassDao = new StudentToClassDao(parent.getContext());
+        }
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_class_admin, parent, false);
         return new ClassViewHolder(view, onClassListener);
     }
@@ -39,15 +45,15 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
         Class currentClass = classList.get(position);
         holder.tvClassName.setText("Tên lớp: " + currentClass.getClassName());
 
-        // Hiển thị tên giáo viên nếu có
         if (currentClass.getTeacherId() != null && currentClass.getTeacherId().getFullName() != null) {
             holder.tvTeacherName.setText("GVCN: " + currentClass.getTeacherId().getFullName());
         } else {
             holder.tvTeacherName.setText("GVCN: Chưa có");
         }
 
-        // TODO: Cần có logic để đếm sĩ số học sinh cho lớp này
-        holder.tvStudentCount.setText("Sĩ số: (chưa có)");
+        // Đếm sĩ số học sinh cho lớp này
+        int studentCount = studentToClassDao.countStudentsInClass(currentClass.getClassId());
+        holder.tvStudentCount.setText("Sĩ số: " + studentCount + " học sinh");
     }
 
     @Override
@@ -55,7 +61,14 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
         return classList.size();
     }
 
-    class ClassViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    // Giao diện (interface) để xử lý sự kiện click
+    public interface OnClassListener {
+        void onClassClick(int position);  // Sự kiện khi click vào cả item
+        void onDeleteClick(int position); // Sự kiện khi click vào nút Xóa
+    }
+
+    // ViewHolder
+    class ClassViewHolder extends RecyclerView.ViewHolder {
         TextView tvClassName, tvTeacherName, tvStudentCount;
         Button btnEdit, btnDelete;
         OnClassListener onClassListener;
@@ -69,23 +82,28 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
             btnDelete = itemView.findViewById(R.id.btnDelete);
             this.onClassListener = onClassListener;
 
-            btnEdit.setOnClickListener(this);
+            // Ẩn nút "Sửa" vì chúng ta sẽ click vào cả item để xem chi tiết
+            btnEdit.setVisibility(View.GONE);
 
-            btnDelete.setOnClickListener(this);
+            // Bắt sự kiện click cho toàn bộ item
+            itemView.setOnClickListener(v -> {
+                if(onClassListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        onClassListener.onClassClick(position);
+                    }
+                }
+            });
+
+            // Bắt sự kiện click cho nút Xóa
+            btnDelete.setOnClickListener(v -> {
+                if(onClassListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        onClassListener.onDeleteClick(position);
+                    }
+                }
+            });
         }
-
-        @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.btnEdit) {
-                onClassListener.onEditClick(getAdapterPosition());
-            } else if (v.getId() == R.id.btnDelete) {
-                onClassListener.onDeleteClick(getAdapterPosition());
-            }
-        }
-    }
-
-    public interface OnClassListener {
-        void onEditClick(int position);
-        void onDeleteClick(int position);
     }
 }

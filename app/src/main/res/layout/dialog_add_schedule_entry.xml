@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView android:text="Thêm/Sửa Tiết học" style="@style/TextAppearance.MaterialComponents.Headline6" android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên hoạt động">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etActivityName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView android:text="Giáo viên phụ trách (Tùy chọn)" style="@style/TextAppearance.MaterialComponents.Caption" android:layout_marginTop="16dp"/>
+    <Spinner android:id="@+id/spinnerTeacher" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp"/>
+</LinearLayout>

@@ -3,7 +3,6 @@ package com.example.project_prm392_kidmanagement;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +32,7 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
 
     // REQUEST_CODE để nhận biết kết quả trả về từ activity thêm/sửa
     private static final int REQUEST_CODE_ADD_CLASS = 1;
-    private static final int REQUEST_CODE_EDIT_CLASS = 2;
-
+    // Có thể không cần REQUEST_CODE_EDIT_CLASS nếu sửa trong màn hình chi tiết
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +50,8 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
     @Override
     protected void onResume() {
         super.onResume();
-        // Load lại dữ liệu mỗi khi quay lại màn hình này
+        // Load lại dữ liệu mỗi khi quay lại màn hình này,
+        // phòng trường hợp có thay đổi từ các màn hình con.
         loadClassData();
     }
 
@@ -78,15 +77,17 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
     }
 
     private void loadClassData() {
-        classList = classDao.getAll(); // Giả sử ClassDao có hàm getAll()
+        // Giả sử ClassDao có hàm getAll() để lấy tất cả các lớp
+        // Bạn cần đảm bảo hàm này trả về cả thông tin Teacher liên kết
+        classList = classDao.getAll();
         adapter.updateData(classList);
     }
 
     private void setupListeners() {
         btnAddClass.setOnClickListener(v -> {
-            // TODO: Tạo Activity để thêm lớp (AdminAddClassActivity)
+            // TODO: Tạo Activity để thêm lớp (AdminAddEditClassActivity)
             Toast.makeText(this, "Chức năng Thêm lớp đang phát triển", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminHomeActivity.this, AdminAddClassActivity.class);
+            // Intent intent = new Intent(this, AdminAddEditClassActivity.class);
             // startActivityForResult(intent, REQUEST_CODE_ADD_CLASS);
         });
 
@@ -105,26 +106,25 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         });
 
         btnManageAccounts.setOnClickListener(v -> {
-            // Mở màn hình quản lý tài khoản
             Intent intent = new Intent(AdminHomeActivity.this, AdminAccountManagementActivity.class);
             startActivity(intent);
         });
 
         btnManageClasses.setOnClickListener(v -> {
-            // Chỉ cần load lại dữ liệu
             loadClassData();
             Toast.makeText(this, "Đã làm mới danh sách lớp", Toast.LENGTH_SHORT).show();
         });
     }
 
+    // --- XỬ LÝ SỰ KIỆN CLICK MỚI ---
     @Override
-    public void onEditClick(int position) {
+    public void onClassClick(int position) {
         Class selectedClass = classList.get(position);
-        Toast.makeText(this, "Sửa lớp: " + selectedClass.getClassName(), Toast.LENGTH_SHORT).show();
-        // TODO: Tạo Activity để sửa lớp (AdminEditClassActivity)
-        // Intent intent = new Intent(this, AdminEditClassActivity.class);
-        // intent.putExtra("CLASS_ID", selectedClass.getClassId());
-        // startActivityForResult(intent, REQUEST_CODE_EDIT_CLASS);
+
+        // Mở màn hình chi tiết lớp học
+        Intent intent = new Intent(this, AdminClassDetailActivity.class);
+        intent.putExtra("CLASS_ID", selectedClass.getClassId());
+        startActivity(intent);
     }
 
     @Override
@@ -133,9 +133,9 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
 
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận xóa")
-                .setMessage("Bạn có chắc muốn xóa lớp '" + selectedClass.getClassName() + "' không? Hành động này không thể hoàn tác.")
+                .setMessage("Bạn có chắc muốn xóa lớp '" + selectedClass.getClassName() + "' không? Hành động này sẽ xóa tất cả liên kết của lớp và không thể hoàn tác.")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    boolean isDeleted = classDao.delete(selectedClass.getClassId()); // Giả sử có hàm delete bằng id
+                    boolean isDeleted = classDao.delete(selectedClass.getClassId());
                     if (isDeleted) {
                         Toast.makeText(this, "Đã xóa lớp thành công", Toast.LENGTH_SHORT).show();
                         loadClassData(); // Load lại danh sách
@@ -147,12 +147,12 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
                 .show();
     }
 
-    // Xử lý kết quả trả về từ các activity thêm/sửa
+    // Xử lý kết quả trả về từ activity thêm/sửa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_ADD_CLASS || requestCode == REQUEST_CODE_EDIT_CLASS) {
+            if (requestCode == REQUEST_CODE_ADD_CLASS) {
                 // Nếu thêm/sửa thành công, load lại danh sách
                 loadClassData();
             }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E3F2FD"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvClassNameTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quản lý Lớp..."
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#0D47A1"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnManageInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✏️ Thông tin chung và GVCN"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnManageStudents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="👧👦 Quản lý Sĩ số"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnManageSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📅 Quản lý Thời khóa biểu"
+        android:layout_marginBottom="12dp"/>
+
+</LinearLayout>

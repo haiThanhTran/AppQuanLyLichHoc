@@ -96,4 +96,22 @@ public class StudentToClassDao {
         cursor.close();
         return list;
     }
+    public int countStudentsInClass(String classId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        int count = 0;
+        try {
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + SqlDatabaseHelper.TABLE_STUDENT_TO_CLASS +
+                    " WHERE " + SqlDatabaseHelper.COLUMN_CLASS_ID + " = ?", new String[]{classId});
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return count;
+    }
 }

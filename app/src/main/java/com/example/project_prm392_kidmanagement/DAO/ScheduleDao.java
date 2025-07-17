@@ -14,55 +14,70 @@ import java.util.List;
 
 public class ScheduleDao {
     private final SqlDatabaseHelper dbHelper;
-    private final Context context;
+    private Context context;
 
     public ScheduleDao(Context context) {
-        dbHelper = new SqlDatabaseHelper(context);
         this.context = context;
+        dbHelper = new SqlDatabaseHelper(context);
     }
 
     public long insert(Schedule schedule) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("classId", schedule.getClassId().getClassId());
-        values.put("teacherId", schedule.getTeacherId().getTeacherId());
-        values.put("activityName", schedule.getActivityName());
-        values.put("activityDate", schedule.getActivityDate());
-        values.put("shift", schedule.getShift());
-        return db.insert(SqlDatabaseHelper.TABLE_SCHEDULE, null, values);
+        values.put(SqlDatabaseHelper.COLUMN_CLASS_ID, schedule.getClassId().getClassId());
+        values.put(SqlDatabaseHelper.COLUMN_TEACHER_ID, schedule.getTeacherId() != null ? schedule.getTeacherId().getTeacherId() : null);
+        values.put(SqlDatabaseHelper.COLUMN_ACTIVITY_NAME, schedule.getActivityName());
+        values.put(SqlDatabaseHelper.COLUMN_ACTIVITY_DATE, schedule.getActivityDate());
+        values.put(SqlDatabaseHelper.COLUMN_SHIFT, schedule.getShift());
+        long result = db.insert(SqlDatabaseHelper.TABLE_SCHEDULE, null, values);
+        db.close();
+        return result;
     }
 
-    public boolean update(Schedule schedule) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("classId", schedule.getClassId().getClassId());
-        values.put("teacherId", schedule.getTeacherId().getTeacherId());
-        values.put("activityName", schedule.getActivityName());
-        values.put("activityDate", schedule.getActivityDate());
-        values.put("shift", schedule.getShift());
-        int rows = db.update(SqlDatabaseHelper.TABLE_SCHEDULE, values, "scheduleId = ?",
-                new String[]{String.valueOf(schedule.getScheduleId())});
-        return rows > 0;
-    }
-
-    public boolean delete(int scheduleId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int rows = db.delete(SqlDatabaseHelper.TABLE_SCHEDULE, "scheduleId = ?",
-                new String[]{String.valueOf(scheduleId)});
-        return rows > 0;
-    }
-
-    // Thêm các hàm truy vấn mới
-    public List<Schedule> getSchedulesByClassId(String classId) {
+    // Lấy TKB cho 1 lớp vào 1 ngày cụ thể
+    public List<Schedule> getScheduleForClassByDate(String classId, String date) {
         List<Schedule> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(SqlDatabaseHelper.TABLE_SCHEDULE, null, "classId = ?",
-                new String[]{classId}, null, null, "activityDate ASC, shift ASC");
+        Cursor cursor = db.query(SqlDatabaseHelper.TABLE_SCHEDULE, null,
+                SqlDatabaseHelper.COLUMN_CLASS_ID + " = ? AND " + SqlDatabaseHelper.COLUMN_ACTIVITY_DATE + " = ?",
+                new String[]{classId, date},
+                null, null, SqlDatabaseHelper.COLUMN_SHIFT + " ASC");
 
         while (cursor.moveToNext()) {
             list.add(ScheduleMapper.fromCursor(cursor, context));
         }
         cursor.close();
+        db.close();
+        return list;
+    }
+
+    public boolean delete(int scheduleId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int rows = db.delete(SqlDatabaseHelper.TABLE_SCHEDULE, SqlDatabaseHelper.COLUMN_SCHEDULE_ID + " = ?",
+                new String[]{String.valueOf(scheduleId)});
+        db.close();
+        return rows > 0;
+    }
+    public List<Schedule> getSchedulesByClassId(String classId) {
+        List<Schedule> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query(SqlDatabaseHelper.TABLE_SCHEDULE, null,
+                    SqlDatabaseHelper.COLUMN_CLASS_ID + " = ?",
+                    new String[]{classId},
+                    null, null,
+                    SqlDatabaseHelper.COLUMN_ACTIVITY_DATE + " ASC, " + SqlDatabaseHelper.COLUMN_SHIFT + " ASC");
+
+            while (cursor.moveToNext()) {
+                list.add(ScheduleMapper.fromCursor(cursor, context));
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
         return list;
     }
 }
