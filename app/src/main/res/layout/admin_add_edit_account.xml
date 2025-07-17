@@ -97,6 +97,79 @@
             android:minHeight="48dp"
             android:visibility="gone"
             android:layout_marginBottom="24dp"/>
+        <!-- Layout nhập thông tin giáo viên -->
+        <!-- Thông tin giáo viên -->
+        <LinearLayout
+            android:id="@+id/layout_teacher_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="8dp">
+
+
+
+            <EditText
+                android:id="@+id/edtTeacherName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Họ tên giáo viên" />
+
+            <EditText
+                android:id="@+id/edtTeacherPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="SĐT giáo viên" />
+
+            <EditText
+                android:id="@+id/edtTeacherAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Địa chỉ giáo viên" />
+
+            <EditText
+                android:id="@+id/edtTeacherDob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ngày sinh giáo viên (yyyy-MM-dd)" />
+        </LinearLayout>
+
+        <!-- Thông tin phụ huynh -->
+        <LinearLayout
+            android:id="@+id/layout_parent_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="8dp">
+
+
+
+            <EditText
+                android:id="@+id/edtParentName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Họ tên phụ huynh" />
+
+            <EditText
+                android:id="@+id/edtParentPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="SĐT phụ huynh" />
+
+            <EditText
+                android:id="@+id/edtParentAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Địa chỉ phụ huynh" />
+
+            <EditText
+                android:id="@+id/edtParentDob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ngày sinh phụ huynh (yyyy-MM-dd)" />
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/btnSaveAccount"

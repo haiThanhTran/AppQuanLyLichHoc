@@ -21,6 +21,19 @@ public class Account {
         this.teacherId = teacherId;
         this.parentId = parentId;
     }
+    public Account(String username, String password, String email, int role, Teacher teacherId, Parent parentId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.teacherId = teacherId;
+        this.parentId = parentId;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
 
     public int getAccountId() {
         return accountId;

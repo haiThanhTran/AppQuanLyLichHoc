@@ -1,6 +1,5 @@
 package com.example.project_prm392_kidmanagement;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -82,14 +81,14 @@ public class AdminAccountManagementActivity extends AppCompatActivity implements
         spinnerFilterRole.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // position: 0=All, 1=Admin, 2=Teacher, 3=Parent
-                if (position == 0) currentRoleFilter = -1; // All
-                else if (position == 1) currentRoleFilter = 2; // Admin (mapping to our DAO logic)
-                else if (position == 2) currentRoleFilter = 1; // Teacher
+                if (position == 0) currentRoleFilter = -1; // Tất cả
+                else if (position == 1) currentRoleFilter = 1; // Admin
+                else if (position == 2) currentRoleFilter = 2; // Teacher
                 else if (position == 3) currentRoleFilter = 0; // Parent
 
                 loadAccountData();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -114,7 +113,6 @@ public class AdminAccountManagementActivity extends AppCompatActivity implements
     }
 
     private void loadAccountData() {
-        // Dùng hàm search và filter mới
         accountList = accountDao.searchAndFilter(currentSearchQuery, currentRoleFilter);
         adapter.updateData(accountList);
     }
@@ -130,6 +128,7 @@ public class AdminAccountManagementActivity extends AppCompatActivity implements
     public void onEditClick(int position) {
         Account selectedAccount = accountList.get(position);
         Intent intent = new Intent(this, AdminAddEditAccountActivity.class);
+        intent.putExtra("MODE", "EDIT");
         intent.putExtra("ACCOUNT_ID", selectedAccount.getAccountId());
         startActivity(intent);
     }
