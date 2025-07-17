@@ -2,35 +2,29 @@ package com.example.project_prm392_kidmanagement.Mapper;
 
 import android.content.Context;
 import android.database.Cursor;
-
-import com.example.project_prm392_kidmanagement.DAO.ClassDao;
 import com.example.project_prm392_kidmanagement.DAO.ParentDao;
-import com.example.project_prm392_kidmanagement.Entity.Class;
-import com.example.project_prm392_kidmanagement.Entity.Parent;
+import com.example.project_prm392_kidmanagement.DB.SqlDatabaseHelper;
 import com.example.project_prm392_kidmanagement.Entity.Student;
 
 public class StudentMapper {
     public static Student fromCursor(Cursor cursor, Context context) {
-        String studentId = cursor.getString(cursor.getColumnIndexOrThrow("studentId"));
-        String fullName = cursor.getString(cursor.getColumnIndexOrThrow("fullName"));
-        String address = cursor.getString(cursor.getColumnIndexOrThrow("address"));
-        String dob = cursor.getString(cursor.getColumnIndexOrThrow("dob"));
+        Student student = new Student();
+        student.setStudentId(cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_STUDENT_ID)));
+        student.setFullName(cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_STUDENT_NAME)));
+        student.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_STUDENT_ADDRESS)));
+        student.setDob(cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_STUDENT_DOB)));
 
-        String parentIdStr = cursor.getString(cursor.getColumnIndexOrThrow("parentId"));
-        String classIdStr = cursor.getString(cursor.getColumnIndexOrThrow("classId"));
-
-        Parent parent = null;
-        Class classroom = null;
-
-        if (parentIdStr != null) {
+        // Lấy thông tin Parent
+        String parentId = cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_PARENT_ID));
+        if (parentId != null) {
             ParentDao parentDao = new ParentDao(context);
-            parent = parentDao.getById(parentIdStr);
+            student.setParentId(parentDao.getById(parentId));
         }
 
-        if (classIdStr != null) {
-            ClassDao classDao = new ClassDao(context);
-            classroom = classDao.getById(classIdStr);
-        }
+        // KHÔNG ĐỌC CỘT classId NỮA
+        // String classId = cursor.getString(cursor.getColumnIndexOrThrow(SqlDatabaseHelper.COLUMN_CLASS_ID)); // <-- XÓA DÒNG NÀY
+        // ...
 
-        return new Student(studentId, parent, fullName, address, dob, classroom);    }
+        return student;
+    }
 }

@@ -5,9 +5,7 @@
     <string name="username_hint">Tên đăng nhập hoặc Email</string>
     <string name="password_hint">Mật khẩu</string>
     <string name="login_button">Đăng nhập</string>
-    <string name="forget_password">Quên mật khẩu?</string>
-    <string name="no_account_prompt">Chưa có tài khoản?</string>
-    <string name="sign_up_prompt">Đăng ký ngay</string>
+
     <string-array name="role_filter_options">
         <item>Tất cả vai trò</item>
         <item>Admin</item>

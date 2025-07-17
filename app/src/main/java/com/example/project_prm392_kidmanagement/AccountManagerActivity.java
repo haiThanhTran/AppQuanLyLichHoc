@@ -17,7 +17,7 @@ public class AccountManagerActivity extends AppCompatActivity {
 
     private TextInputEditText edtUsername, edtPassword;
     private Button btnLogin;
-    private TextView btnSignUp, forgotPassword;
+
 
     private AccountDao accountDao;
 
@@ -29,8 +29,7 @@ public class AccountManagerActivity extends AppCompatActivity {
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        btnSignUp = findViewById(R.id.btnSignUp);
-        forgotPassword = findViewById(R.id.forgotPassword);
+
 
         accountDao = new AccountDao(this);
 
@@ -98,12 +97,6 @@ public class AccountManagerActivity extends AppCompatActivity {
             }
         });
 
-        btnSignUp.setOnClickListener(view -> {
-            Toast.makeText(this, "Chức năng đăng ký chưa được triển khai", Toast.LENGTH_SHORT).show();
-        });
 
-        forgotPassword.setOnClickListener(view -> {
-            Toast.makeText(this, "Vui lòng liên hệ giáo viên hoặc quản trị viên để lấy lại mật khẩu", Toast.LENGTH_SHORT).show();
-        });
     }
 }

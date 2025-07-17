@@ -1,7 +1,6 @@
 package com.example.project_prm392_kidmanagement;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +63,8 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
         tvScheduleTitle.setText("TKB Lớp: " + className);
         setTitle("TKB Lớp: " + className);
 
-        rvShifts.setLayoutManager(new LinearLayoutManager(this));
+        // --- SỬA LẠI LOGIC KHỞI TẠO ---
+        setupRecyclerView();
 
         etSelectedDate.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
         selectedDate = etSelectedDate.getText().toString();
@@ -87,23 +87,32 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
         teacherDao = new TeacherDao(this);
     }
 
+    private void setupRecyclerView() {
+        rvShifts.setLayoutManager(new LinearLayoutManager(this));
+        // Khởi tạo list rỗng và adapter MỘT LẦN DUY NHẤT
+        shiftList = new ArrayList<>();
+        adapter = new ShiftAdapter(shiftList, this);
+        rvShifts.setAdapter(adapter);
+    }
+
     private void loadScheduleForDate() {
-        shiftList = createEmptyShifts();
+        // Tạo một danh sách ca học trống tạm thời
+        List<Shift> emptyShifts = createEmptyShifts();
+        // Lấy lịch học thực tế từ database
         List<Schedule> dailySchedules = scheduleDao.getScheduleForClassByDate(classId, selectedDate);
 
+        // Gán lịch học thực tế vào đúng ca
         for (Schedule s : dailySchedules) {
             int shiftIndex = s.getShift() - 1;
-            if (shiftIndex >= 0 && shiftIndex < shiftList.size()) {
-                shiftList.get(shiftIndex).setSchedule(s);
+            if (shiftIndex >= 0 && shiftIndex < emptyShifts.size()) {
+                emptyShifts.get(shiftIndex).setSchedule(s);
             }
         }
 
-        if (adapter == null) {
-            adapter = new ShiftAdapter(shiftList, this);
-            rvShifts.setAdapter(adapter);
-        } else {
-            adapter.updateData(shiftList);
-        }
+        // Cập nhật dữ liệu cho adapter
+        shiftList.clear();
+        shiftList.addAll(emptyShifts);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -122,7 +131,7 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
 
         List<Teacher> teachers = teacherDao.getAll();
         List<String> teacherDisplayList = new ArrayList<>();
-        teacherDisplayList.add("Không chọn giáo viên"); // Lựa chọn mặc định
+        teacherDisplayList.add("Không chọn giáo viên");
         for (Teacher t : teachers) {
             teacherDisplayList.add(t.getTeacherId() + " - " + t.getFullName());
         }
@@ -130,12 +139,12 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
         teacherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTeacher.setAdapter(teacherAdapter);
 
-        if (shift.getSchedule() != null) { // Chế độ Sửa/Xóa
+        if (shift.getSchedule() != null) {
             etActivityName.setText(shift.getSchedule().getActivityName());
             if (shift.getSchedule().getTeacherId() != null) {
                 for (int i = 0; i < teachers.size(); i++) {
                     if (teachers.get(i).getTeacherId().equals(shift.getSchedule().getTeacherId().getTeacherId())) {
-                        spinnerTeacher.setSelection(i + 1); // +1 vì có lựa chọn "Không chọn"
+                        spinnerTeacher.setSelection(i + 1);
                         break;
                     }
                 }
@@ -155,13 +164,17 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
             }
 
             Teacher selectedTeacher = null;
-            if (spinnerTeacher.getSelectedItemPosition() > 0) { // >0 để bỏ qua "Không chọn"
+            if (spinnerTeacher.getSelectedItemPosition() > 0) {
                 selectedTeacher = teachers.get(spinnerTeacher.getSelectedItemPosition() - 1);
             }
 
+            // Dùng lại schedule cũ nếu là sửa, hoặc tạo mới nếu là thêm
             Schedule scheduleToSave = shift.getSchedule() != null ? shift.getSchedule() : new Schedule();
-            scheduleToSave.setClassId(new com.example.project_prm392_kidmanagement.Entity.Class());
-            scheduleToSave.getClassId().setClassId(classId);
+            // Lấy classId từ biến toàn cục
+            com.example.project_prm392_kidmanagement.Entity.Class currentClass = new com.example.project_prm392_kidmanagement.Entity.Class();
+            currentClass.setClassId(classId);
+            scheduleToSave.setClassId(currentClass);
+
             scheduleToSave.setActivityName(activityName);
             scheduleToSave.setTeacherId(selectedTeacher);
             scheduleToSave.setActivityDate(selectedDate);
@@ -169,11 +182,15 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
 
             if (shift.getSchedule() != null) {
                 // TODO: Viết hàm update trong ScheduleDao
-                // scheduleDao.update(scheduleToSave);
+                // boolean success = scheduleDao.update(scheduleToSave);
                 Toast.makeText(this, "Chức năng sửa đang phát triển", Toast.LENGTH_SHORT).show();
             } else {
-                scheduleDao.insert(scheduleToSave);
-                Toast.makeText(this, "Đã thêm tiết học", Toast.LENGTH_SHORT).show();
+                long result = scheduleDao.insert(scheduleToSave);
+                if (result != -1) {
+                    Toast.makeText(this, "Đã thêm tiết học", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Thêm tiết học thất bại", Toast.LENGTH_SHORT).show();
+                }
             }
             loadScheduleForDate();
         });
@@ -201,10 +218,10 @@ public class AdminSetScheduleActivity extends AppCompatActivity implements Shift
 
     private List<Shift> createEmptyShifts() {
         List<Shift> list = new ArrayList<>();
-        list.add(new Shift(1, "Ca 1 (Sáng)"));
-        list.add(new Shift(2, "Ca 2 (Sáng)"));
-        list.add(new Shift(3, "Ca 3 (Chiều)"));
-        list.add(new Shift(4, "Ca 4 (Chiều)"));
+        list.add(new Shift(1, "Ca 1 (Sáng 1)"));
+        list.add(new Shift(2, "Ca 2 (Sáng 2)"));
+        list.add(new Shift(3, "Ca 3 (Chiều 1)"));
+        list.add(new Shift(4, "Ca 4 (Chiều 2)"));
         return list;
     }
 }

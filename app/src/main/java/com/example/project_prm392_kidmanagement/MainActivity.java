@@ -66,8 +66,14 @@ public class MainActivity extends AppCompatActivity {
             classDao.insert(class1);
 
             // 5. Thêm học sinh
-            Student student = new Student("STU01", parent, "Bùi Gia Huy", "Yên Bái", "2020-01-15", class1);
-            studentDao.insert(student);
+            Student student = new Student();
+            student.setStudentId("STU01");
+            student.setParentId(parent); // Gán đối tượng Parent đã tạo
+            student.setFullName("Nguyễn Minh Anh");
+            student.setAddress("Hà Nội");
+            student.setDob("2020-01-15");
+// KHÔNG CÓ student.setClassId(class1); nữa
+            long stResult = studentDao.insert(student);
 
             // 6. Thêm lịch học cho lớp
             Schedule schedule1 = new Schedule(0, class1, teacher, "Học toán", "2025-07-18", 1);

@@ -8,7 +8,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.project_prm392_kidmanagement.DAO.StudentToClassDao;
+import com.example.project_prm392_kidmanagement.Entity.StudentToClass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -45,7 +46,7 @@ public class ParentHomeManagerActivity extends AppCompatActivity {
     private ClassDao classDao;
     private TeacherDao teacherDao;
     private ScheduleDao scheduleDao;
-
+    private StudentToClassDao studentToClassDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +81,7 @@ public class ParentHomeManagerActivity extends AppCompatActivity {
         classDao = new ClassDao(this);
         teacherDao = new TeacherDao(this);
         scheduleDao = new ScheduleDao(this);
+        studentToClassDao = new StudentToClassDao(this); // <-- KHỞI TẠO
     }
 
     private void loadAndDisplayData(String parentId) {
@@ -93,22 +95,26 @@ public class ParentHomeManagerActivity extends AppCompatActivity {
             Student student = studentList.get(0); // Tạm thời lấy học sinh đầu tiên
             tvStudentName.setText("🧒 Bé: " + student.getFullName());
 
-            if (student.getClassId() != null) {
-                Class classroom = classDao.getById(student.getClassId().getClassId());
-                if (classroom != null) {
-                    tvClassInfo.setText("📚 Lớp: " + classroom.getClassName() + " – Năm học: " + classroom.getSchoolYear());
+            // --- LOGIC MỚI ĐỂ LẤY LỚP HỌC ---
+            // 1. Tìm trong bảng studentToClass xem học sinh này thuộc lớp nào
+            StudentToClass studentClassLink = studentToClassDao.getClassForStudent(student.getStudentId());
 
-                    if (classroom.getTeacherId() != null) {
-                        Teacher teacher = teacherDao.getById(classroom.getTeacherId().getTeacherId());
-                        if (teacher != null) {
-                            tvTeacherName.setText("👩‍🏫 GVCN: " + teacher.getFullName());
-                        }
-                    }
+            if (studentClassLink != null && studentClassLink.getClassId() != null) {
+                // 2. Lấy thông tin chi tiết của lớp học từ ID đã tìm được
+                Class classroom = studentClassLink.getClassId();
+                tvClassInfo.setText("📚 Lớp: " + classroom.getClassName() + " – Năm học: " + classroom.getSchoolYear());
 
-                    // Lấy và hiển thị TKB
-                    List<Schedule> schedules = scheduleDao.getSchedulesByClassId(classroom.getClassId());
-                    displaySchedules(schedules);
+                if (classroom.getTeacherId() != null) {
+                    Teacher teacher = classroom.getTeacherId();
+                    tvTeacherName.setText("👩‍🏫 GVCN: " + teacher.getFullName());
                 }
+
+                // Lấy và hiển thị TKB
+                List<Schedule> schedules = scheduleDao.getSchedulesByClassId(classroom.getClassId());
+                displaySchedules(schedules);
+            } else {
+                tvClassInfo.setText("📚 Lớp: (Chưa xếp lớp)");
+                tvTeacherName.setText("👩‍🏫 GVCN: (Chưa có)");
             }
         }
     }

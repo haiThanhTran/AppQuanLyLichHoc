@@ -114,4 +114,24 @@ public class StudentToClassDao {
         }
         return count;
     }
+    // Trong StudentToClassDao.java
+    public StudentToClass getClassForStudent(String studentId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        StudentToClass result = null;
+        try {
+            cursor = db.query(SqlDatabaseHelper.TABLE_STUDENT_TO_CLASS, null,
+                    SqlDatabaseHelper.COLUMN_STUDENT_ID + " = ?", new String[]{studentId},
+                    null, null, null, "1");
+            if (cursor.moveToFirst()) {
+                result = StudentToClassMapper.fromCursor(cursor, context);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return result;
+    }
 }

@@ -46,7 +46,7 @@ public class AdminClassDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         tvClassNameTitle = findViewById(R.id.tvClassNameTitle);
-        btnManageInfo = findViewById(R.id.btnManageInfo);
+//        btnManageInfo = findViewById(R.id.btnManageInfo);
         btnManageStudents = findViewById(R.id.btnManageStudents);
         btnManageSchedule = findViewById(R.id.btnManageSchedule);
     }
@@ -60,10 +60,7 @@ public class AdminClassDetailActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        btnManageInfo.setOnClickListener(v -> {
-            // TODO: Mở màn hình Thêm/Sửa lớp học, gửi classId để ở chế độ sửa
-            Toast.makeText(this, "Mở màn hình Sửa thông tin lớp", Toast.LENGTH_SHORT).show();
-        });
+
 
         btnManageStudents.setOnClickListener(v -> {
             // TODO: Mở màn hình quản lý sĩ số lớp

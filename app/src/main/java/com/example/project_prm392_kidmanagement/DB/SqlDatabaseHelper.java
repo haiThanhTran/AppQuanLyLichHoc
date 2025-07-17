@@ -9,7 +9,7 @@ public class SqlDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Kid_database";
     // TĂNG VERSION LÊN để kích hoạt onUpgrade và tạo lại database đúng cấu trúc
-    public static final int DATABASE_VERSION = 7; // Đã tăng lên 7
+    public static final int DATABASE_VERSION = 8; // Đã tăng lên 7
 
     // --- Khai báo các bảng và cột ---
     public static final String TABLE_TEACHER = "teachers";
@@ -172,16 +172,16 @@ public class SqlDatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_ACCOUNT, null, adminAccount);
 
         ContentValues teacherAccount = new ContentValues();
-        teacherAccount.put(COLUMN_USERNAME, "teacher_mai");
-        teacherAccount.put(COLUMN_PASSWORD, "123456");
+        teacherAccount.put(COLUMN_USERNAME, "teacher");
+        teacherAccount.put(COLUMN_PASSWORD, "teacher");
         teacherAccount.put(COLUMN_EMAIL, "teacher.mai@school.edu.vn");
         teacherAccount.put(COLUMN_ROLE, 1); // Teacher
         teacherAccount.put(COLUMN_TEACHER_ID, "GV001");
         db.insert(TABLE_ACCOUNT, null, teacherAccount);
 
         ContentValues parentAccount = new ContentValues();
-        parentAccount.put(COLUMN_USERNAME, "parent_an");
-        parentAccount.put(COLUMN_PASSWORD, "123456");
+        parentAccount.put(COLUMN_USERNAME, "parent");
+        parentAccount.put(COLUMN_PASSWORD, "parent");
         parentAccount.put(COLUMN_EMAIL, "parent.an@email.com");
         parentAccount.put(COLUMN_ROLE, 0); // Parent
         parentAccount.put(COLUMN_PARENT_ID, "PH001");
