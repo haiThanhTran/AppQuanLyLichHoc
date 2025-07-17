@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E3F2FD"
+    android:padding="16dp">
+
+    <!-- Tiêu đề và lời chào -->
+    <TextView
+        android:id="@+id/tvAdminWelcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="👑 Chào mừng, Admin!"
+        android:textSize="22sp"
+        android:textColor="#0D47A1"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Bạn có thể thêm các nút quản lý khác ở đây -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnManageAccounts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tài khoản"
+            android:layout_marginEnd="8dp"/>
+        <Button
+            android:id="@+id/btnManageClasses"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Lớp học"/>
+
+    </LinearLayout>
+
+    <!-- Danh sách lớp học -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 Quản lý Lớp học"
+        android:textSize="18sp"
+        android:textColor="#1565C0"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvClassList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/recycler_view_background"
+        android:padding="4dp"/>
+
+    <!-- Nút Thêm lớp mới -->
+    <Button
+        android:id="@+id/btnAddClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="➕ Thêm lớp mới"
+        android:backgroundTint="#4CAF50"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Nút Đăng xuất -->
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="🚪  Đăng xuất"
+        android:backgroundTint="#757575"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
