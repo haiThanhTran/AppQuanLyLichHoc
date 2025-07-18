@@ -33,6 +33,30 @@ public class AdminAddEditAccountActivity extends AppCompatActivity {
     private int accountId = -1;
     private Account currentAccount;
 
+ //   @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.admin_add_edit_account);
+//
+//        initDAOs();
+//        initViews();
+//        setupRoleSelectionListener();
+//
+//        mode = getIntent().getStringExtra("MODE");
+//        if ("EDIT".equals(mode)) {
+//            accountId = getIntent().getIntExtra("ACCOUNT_ID", -1);
+//            loadAccountData(accountId);
+//        }
+//
+//        btnSaveAccount.setOnClickListener(v -> {
+//            if ("EDIT".equals(mode)) {
+//                updateUser();
+//            } else {
+//                saveNewUser();
+//            }
+//        });
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +66,20 @@ public class AdminAddEditAccountActivity extends AppCompatActivity {
         initViews();
         setupRoleSelectionListener();
 
+        // Xác định chế độ thêm hay sửa
         mode = getIntent().getStringExtra("MODE");
         if ("EDIT".equals(mode)) {
+            tvTitle.setText("Sửa thông tin tài khoản");
             accountId = getIntent().getIntExtra("ACCOUNT_ID", -1);
-            loadAccountData(accountId);
+
+            if (accountId != -1) {
+                loadAccountData(accountId);  // Nạp dữ liệu vào form để chỉnh sửa
+            } else {
+                Toast.makeText(this, "Lỗi: Không tìm thấy tài khoản cần sửa", Toast.LENGTH_SHORT).show();
+                finish(); // Thoát nếu lỗi
+            }
+        } else {
+            tvTitle.setText("Thêm người dùng mới");
         }
 
         btnSaveAccount.setOnClickListener(v -> {
@@ -56,6 +90,7 @@ public class AdminAddEditAccountActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void initDAOs() {
         accountDao = new AccountDao(this);
