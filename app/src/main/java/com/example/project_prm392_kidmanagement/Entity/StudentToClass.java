@@ -13,6 +13,10 @@ public class StudentToClass {
         this.studentId = studentId;
         this.classId = classId;
     }
+    public StudentToClass( Student studentId, Class classId) {
+        this.studentId = studentId;
+        this.classId = classId;
+    }
 
     public String getStudentClassID() {
         return studentClassID;

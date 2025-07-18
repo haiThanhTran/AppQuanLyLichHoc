@@ -74,6 +74,7 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         adapter = new ClassAdminAdapter(classList, this);
         rvClassList.setLayoutManager(new LinearLayoutManager(this));
         rvClassList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void loadClassData() {
@@ -87,8 +88,8 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         btnAddClass.setOnClickListener(v -> {
             // TODO: Tạo Activity để thêm lớp (AdminAddEditClassActivity)
             Toast.makeText(this, "Chức năng Thêm lớp đang phát triển", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, AdminAddEditClassActivity.class);
-            // startActivityForResult(intent, REQUEST_CODE_ADD_CLASS);
+             Intent intent = new Intent(this, AddClassActivity.class);
+             startActivity(intent);
         });
 
         btnLogout.setOnClickListener(v -> {
