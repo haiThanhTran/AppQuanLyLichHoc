@@ -19,17 +19,22 @@ public class AdminClassDetailActivity extends AppCompatActivity {
     private Class currentClass;
     private String classId;
 
+    public String getClassId() {
+        classId = getIntent().getStringExtra("CLASS_ID");
+        return classId;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_class_detail);
 
-        classId = getIntent().getStringExtra("CLASS_ID");
-        if (classId == null) {
-            Toast.makeText(this, "Lỗi: Không tìm thấy ID lớp học", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+       try {
+           String id = getClassId();
+           Toast.makeText(this, "Lớp ID: " + id, Toast.LENGTH_SHORT).show();
+       }catch (Exception e) {
+           Toast.makeText(this, "Không tìm thấy lớp", Toast.LENGTH_SHORT).show();
+       }
 
         initViews();
         classDao = new ClassDao(this);
@@ -65,6 +70,9 @@ public class AdminClassDetailActivity extends AppCompatActivity {
         btnManageStudents.setOnClickListener(v -> {
             // TODO: Mở màn hình quản lý sĩ số lớp
             Toast.makeText(this, "Mở màn hình Quản lý sĩ số", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this,AddStudentActivity.class);
+            intent.putExtra("CLASS_ID", classId);
+            startActivity(intent);
         });
 
         btnManageSchedule.setOnClickListener(v -> {

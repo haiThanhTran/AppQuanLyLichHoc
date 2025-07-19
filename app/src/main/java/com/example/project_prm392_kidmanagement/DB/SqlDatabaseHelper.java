@@ -9,7 +9,7 @@ public class SqlDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Kid_database";
     // TĂNG VERSION LÊN để kích hoạt onUpgrade và tạo lại database đúng cấu trúc
-    public static final int DATABASE_VERSION = 8; // Đã tăng lên 7
+    public static final int DATABASE_VERSION = 10; // Đã tăng lên 7
 
     // --- Khai báo các bảng và cột ---
     public static final String TABLE_TEACHER = "teachers";
