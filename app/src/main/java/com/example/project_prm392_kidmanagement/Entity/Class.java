@@ -7,6 +7,7 @@ public class Class {
     private Teacher teacherId; // Giáo viên chủ nhiệm
     // Bỏ trường scheduleId ở đây
 
+    private int isDeleted;
     public Class() {
     }
 
@@ -16,6 +17,22 @@ public class Class {
         this.className = className;
         this.schoolYear = schoolYear;
         this.teacherId = teacherId;
+    }
+
+    public int getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(int isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Class(String classId, int isDeleted, Teacher teacherId, String schoolYear, String className) {
+        this.classId = classId;
+        this.isDeleted = isDeleted;
+        this.teacherId = teacherId;
+        this.schoolYear = schoolYear;
+        this.className = className;
     }
 
     // Getters & Setters giữ nguyên (trừ của scheduleId)

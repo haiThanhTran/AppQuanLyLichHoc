@@ -46,11 +46,12 @@ public class ClassDao {
 
     public boolean delete(String classId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int rows = db.delete(
+        ContentValues values = new ContentValues();
+        values.put("isDeleted", 1);
+        int rows = db.update(
                 SqlDatabaseHelper.TABLE_CLASS,
-                "classId = ?",
-                new String[]{classId}
-        );
+                values,"classId = ?",
+                new String[]{classId});
         return rows > 0;
     }
 
