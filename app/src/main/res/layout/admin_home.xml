@@ -32,12 +32,21 @@
             android:layout_weight="1"
             android:text="Tài khoản"
             android:layout_marginEnd="8dp"/>
+
         <Button
             android:id="@+id/btnManageClasses"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Lớp học"/>
+            android:text="Lớp học"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnManageStudent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Học sinh"/>
 
     </LinearLayout>
 

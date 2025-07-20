@@ -29,7 +29,7 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
 
     private TextView tvAdminWelcome;
     private RecyclerView rvClassList;
-    private Button btnAddClass, btnLogout, btnManageAccounts, btnManageClasses;
+    private Button btnAddClass, btnLogout, btnManageAccounts, btnManageClasses,btnManageStudent;
 
     private ClassDao classDao;
     private ClassAdminAdapter adapter;
@@ -67,7 +67,7 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         btnLogout = findViewById(R.id.btnLogout);
         btnManageAccounts = findViewById(R.id.btnManageAccounts);
         btnManageClasses = findViewById(R.id.btnManageClasses);
-
+        btnManageStudent = findViewById(R.id.btnManageStudent);
         String adminUsername = getIntent().getStringExtra("adminUsername");
         if (adminUsername != null) {
             tvAdminWelcome.setText("👑 Chào mừng, " + adminUsername + "!");
@@ -124,6 +124,11 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
             loadClassData();
             Toast.makeText(this, "Đã làm mới danh sách lớp", Toast.LENGTH_SHORT).show();
         });
+        btnManageStudent.setOnClickListener(v -> {
+           Intent intent = new Intent(this,AdminStudentManagementActivity.class);
+           startActivity(intent);
+        });
+
     }
 
     // --- XỬ LÝ SỰ KIỆN CLICK MỚI ---
