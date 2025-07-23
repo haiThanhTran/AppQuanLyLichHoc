@@ -46,7 +46,7 @@ public class StudentToClassDao {
         return rows > 0;
     }
 
-    public boolean delete(int studentClassID) {
+    public boolean delete(String studentClassID) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows = db.delete(
                 SqlDatabaseHelper.TABLE_STUDENT_TO_CLASS,

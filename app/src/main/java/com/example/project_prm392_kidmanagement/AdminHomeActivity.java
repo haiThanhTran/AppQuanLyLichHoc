@@ -3,6 +3,7 @@ package com.example.project_prm392_kidmanagement;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,17 +15,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_prm392_kidmanagement.DAO.ClassDao;
+import com.example.project_prm392_kidmanagement.DAO.StudentToClassDao;
+import com.example.project_prm392_kidmanagement.DAO.TeacherDao;
 import com.example.project_prm392_kidmanagement.Entity.Class;
+import com.example.project_prm392_kidmanagement.Entity.StudentToClass;
 import com.example.project_prm392_kidmanagement.adapter.ClassAdminAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAdapter.OnClassListener {
 
     private TextView tvAdminWelcome;
     private RecyclerView rvClassList;
-    private Button btnAddClass, btnLogout, btnManageAccounts, btnManageClasses;
+    private Button btnAddClass, btnLogout, btnManageAccounts, btnManageClasses,btnManageStudent;
 
     private ClassDao classDao;
     private ClassAdminAdapter adapter;
@@ -62,7 +67,7 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         btnLogout = findViewById(R.id.btnLogout);
         btnManageAccounts = findViewById(R.id.btnManageAccounts);
         btnManageClasses = findViewById(R.id.btnManageClasses);
-
+        btnManageStudent = findViewById(R.id.btnManageStudent);
         String adminUsername = getIntent().getStringExtra("adminUsername");
         if (adminUsername != null) {
             tvAdminWelcome.setText("👑 Chào mừng, " + adminUsername + "!");
@@ -74,14 +79,18 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
         adapter = new ClassAdminAdapter(classList, this);
         rvClassList.setLayoutManager(new LinearLayoutManager(this));
         rvClassList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     private void loadClassData() {
         // Giả sử ClassDao có hàm getAll() để lấy tất cả các lớp
         // Bạn cần đảm bảo hàm này trả về cả thông tin Teacher liên kết
         classList = classDao.getAll();
-        adapter.updateData(classList);
+        for(Class c : classList) {
+            Log.d("CLASS ID" , c.getClassId() + "-----" +c.getIsDeleted());
+        }
+        adapter.updateData(classList.stream()
+                .filter(c -> c.getIsDeleted() == 0)
+                .collect(Collectors.toList()));
     }
 
     private void setupListeners() {
@@ -115,6 +124,11 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
             loadClassData();
             Toast.makeText(this, "Đã làm mới danh sách lớp", Toast.LENGTH_SHORT).show();
         });
+        btnManageStudent.setOnClickListener(v -> {
+           Intent intent = new Intent(this,AdminStudentManagementActivity.class);
+           startActivity(intent);
+        });
+
     }
 
     // --- XỬ LÝ SỰ KIỆN CLICK MỚI ---
@@ -131,11 +145,12 @@ public class AdminHomeActivity extends AppCompatActivity implements ClassAdminAd
     @Override
     public void onDeleteClick(int position) {
         Class selectedClass = classList.get(position);
-
+        StudentToClassDao studentToClassDao = new StudentToClassDao(this);
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc muốn xóa lớp '" + selectedClass.getClassName() + "' không? Hành động này sẽ xóa tất cả liên kết của lớp và không thể hoàn tác.")
                 .setPositiveButton("Xóa", (dialog, which) -> {
+
                     boolean isDeleted = classDao.delete(selectedClass.getClassId());
                     if (isDeleted) {
                         Toast.makeText(this, "Đã xóa lớp thành công", Toast.LENGTH_SHORT).show();

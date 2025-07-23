@@ -32,7 +32,6 @@ public class ClassAdminAdapter extends RecyclerView.Adapter<ClassAdminAdapter.Cl
     @NonNull
     @Override
     public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Khởi tạo studentToClassDao một lần duy nhất ở đây
         if (studentToClassDao == null) {
             studentToClassDao = new StudentToClassDao(parent.getContext());
         }

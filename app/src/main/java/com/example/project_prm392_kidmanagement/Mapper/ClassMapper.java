@@ -12,11 +12,13 @@ public class ClassMapper {
         String className = cursor.getString(cursor.getColumnIndexOrThrow("className"));
         String schoolYear = cursor.getString(cursor.getColumnIndexOrThrow("schoolYear"));
         String teacherId = cursor.getString(cursor.getColumnIndexOrThrow("teacherId"));
+        int isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow("isDeleted"));
+
 
         TeacherDao teacherDao = new TeacherDao(context);
         Teacher teacher = teacherDao.getById(teacherId);
 
         // Bỏ schedule đi
-        return new Class(classId, className, schoolYear, teacher);
+        return new Class(classId, isDeleted ,teacher, schoolYear, className);
     }
 }
